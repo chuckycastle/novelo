@@ -48,8 +48,8 @@ export function setupPointerHandlers(
     const pos = getPositionFromElement(e.target as Element);
     if (!pos) return;
 
-    // Capture pointer for tracking
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    // Capture pointer on the grid element to prevent pointerleave during drag
+    gridElement.setPointerCapture(e.pointerId);
 
     tracker = {
       startX: e.clientX,
@@ -101,8 +101,18 @@ export function setupPointerHandlers(
   };
 
   const onPointerCancel = (): void => {
-    tracker = null;
-    callbacks.onCancel();
+    if (tracker) {
+      tracker = null;
+      callbacks.onCancel();
+    }
+  };
+
+  const onPointerLeave = (): void => {
+    // Only cancel if we don't have an active tracker (pointer not captured)
+    // With pointer capture on grid, this shouldn't fire during active interaction
+    if (!tracker) {
+      callbacks.onCancel();
+    }
   };
 
   // Add event listeners
@@ -110,7 +120,7 @@ export function setupPointerHandlers(
   gridElement.addEventListener('pointermove', onPointerMove);
   gridElement.addEventListener('pointerup', onPointerUp);
   gridElement.addEventListener('pointercancel', onPointerCancel);
-  gridElement.addEventListener('pointerleave', onPointerCancel);
+  gridElement.addEventListener('pointerleave', onPointerLeave);
 
   // Prevent context menu on long press
   gridElement.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -121,6 +131,6 @@ export function setupPointerHandlers(
     gridElement.removeEventListener('pointermove', onPointerMove);
     gridElement.removeEventListener('pointerup', onPointerUp);
     gridElement.removeEventListener('pointercancel', onPointerCancel);
-    gridElement.removeEventListener('pointerleave', onPointerCancel);
+    gridElement.removeEventListener('pointerleave', onPointerLeave);
   };
 }
