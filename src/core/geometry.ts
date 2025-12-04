@@ -145,11 +145,12 @@ export function projectToGridCell(
   let steps: number;
 
   if (direction.dRow === 0) {
-    // Horizontal: use dx
-    steps = dx / cellSize;
+    // Horizontal: project dx onto direction to get steps along that axis
+    // This handles the sign correctly (e.g., dx=-300, dCol=-1 → steps=+6)
+    steps = (dx * direction.dCol) / cellSize;
   } else if (direction.dCol === 0) {
-    // Vertical: use dy
-    steps = dy / cellSize;
+    // Vertical: project dy onto direction to get steps along that axis
+    steps = (dy * direction.dRow) / cellSize;
   } else {
     // Diagonal: use the component that gives the most steps
     // (both should be similar for true diagonal movement)
