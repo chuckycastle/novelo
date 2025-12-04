@@ -29,26 +29,51 @@
   }
 }
 
-/* Grid styling - responsive for portrait mobile */
+/* Grid styling - responsive for all screen sizes */
 #grid {
   display: grid;
   grid-template-columns: repeat(20, 1fr);
   gap: 0;
   touch-action: none; /* Prevent scrolling while interacting with grid */
-  width: min(100%, calc(100vw - 2rem)); /* Fit within viewport with padding */
-  max-width: 720px; /* Cap size on larger screens */
-  aspect-ratio: 1; /* Keep grid square */
+  /* Mobile: fit viewport, Desktop: use fixed cell sizes */
+  width: calc(100vw - 1rem);
+  max-width: 720px;
 }
 
-/* Grid cells - size based on container */
+/* Responsive grid sizing */
+@media (min-width: 640px) {
+  #grid {
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* Grid cells - responsive sizing */
 #grid button {
-  aspect-ratio: 1;
-  width: 100%;
-  height: auto;
+  /* Mobile: viewport-based */
+  width: calc((100vw - 1rem - 2px) / 20);
+  height: calc((100vw - 1rem - 2px) / 20);
   min-width: 0;
   min-height: 0;
   padding: 0;
   font-size: clamp(0.5rem, 2.5vw, 0.875rem);
+}
+
+/* Tablet and up: fixed sizes */
+@media (min-width: 640px) {
+  #grid button {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Desktop: larger cells */
+@media (min-width: 768px) {
+  #grid button {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 /* Prevent text selection during drag */

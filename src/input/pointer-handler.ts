@@ -51,9 +51,7 @@ export function setupPointerHandlers(
     // Prevent default to stop scrolling/text selection
     e.preventDefault();
 
-    // Capture pointer on the grid element to prevent pointerleave during drag
-    gridElement.setPointerCapture(e.pointerId);
-
+    // Store pointer ID for potential capture during drag
     tracker = {
       startX: e.clientX,
       startY: e.clientY,
@@ -78,6 +76,8 @@ export function setupPointerHandlers(
     // Check if we've crossed the drag threshold
     if (!tracker.hasMoved && distance > DRAG_THRESHOLD) {
       tracker.hasMoved = true;
+      // Only capture pointer once drag starts (not on tap)
+      gridElement.setPointerCapture(e.pointerId);
       callbacks.onDragStart(tracker.startPosition);
     }
 
@@ -96,8 +96,9 @@ export function setupPointerHandlers(
       // End drag
       callbacks.onDragEnd();
     } else {
-      // It was a tap - get the end position
-      const pos = getPositionFromElement(e.target as Element);
+      // It was a tap - use elementFromPoint to get the cell under pointer
+      // (more reliable than e.target which can be affected by pointer capture)
+      const pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
       if (pos) {
         callbacks.onTapEnd(pos);
       }
