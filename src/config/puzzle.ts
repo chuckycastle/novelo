@@ -1,8 +1,8 @@
 import type { PuzzleConfig } from '../types';
 
 export const familyPuzzle: PuzzleConfig = {
-  title: 'Family Word Search',
-  description: 'Find the names of children and grandchildren hidden in the grid.',
+  title: 'NOVELO Name Search',
+  description: 'Find the names of the NOVELOs hidden in the grid. Names can appear forwards, backwards, or diagonally.',
   grid: [
     'MXXOXCZVYAXKQYRLTTSE',
     'GAIPAZSQWDANENTSEWQP',

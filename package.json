@@ -1,7 +1,7 @@
 {
   "name": "novelo",
   "version": "1.0.0",
-  "description": "Family Word Search - Interactive puzzle game",
+  "description": "NOVELO Name Search - Interactive puzzle game",
   "type": "module",
   "scripts": {
     "dev": "vite",
