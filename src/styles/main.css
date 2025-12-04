@@ -29,50 +29,19 @@
   }
 }
 
-/* Grid styling - responsive for all screen sizes */
+/* Grid styling */
 #grid {
   display: grid;
-  grid-template-columns: repeat(20, 1fr);
+  grid-template-columns: repeat(20, minmax(0, 1fr));
   gap: 0;
   touch-action: none; /* Prevent scrolling while interacting with grid */
-  /* Mobile: fit viewport, Desktop: use fixed cell sizes */
-  width: calc(100vw - 1rem);
-  max-width: 720px;
 }
 
-/* Responsive grid sizing */
-@media (min-width: 640px) {
+/* Mobile-only: constrain grid to viewport width */
+@media (max-width: 639px) {
   #grid {
-    width: auto;
-    max-width: none;
-  }
-}
-
-/* Grid cells - responsive sizing */
-#grid button {
-  /* Mobile: viewport-based */
-  width: calc((100vw - 1rem - 2px) / 20);
-  height: calc((100vw - 1rem - 2px) / 20);
-  min-width: 0;
-  min-height: 0;
-  padding: 0;
-  font-size: clamp(0.5rem, 2.5vw, 0.875rem);
-}
-
-/* Tablet and up: fixed sizes */
-@media (min-width: 640px) {
-  #grid button {
-    width: 32px;
-    height: 32px;
-    font-size: 0.875rem;
-  }
-}
-
-/* Desktop: larger cells */
-@media (min-width: 768px) {
-  #grid button {
-    width: 36px;
-    height: 36px;
+    width: calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
   }
 }
 

@@ -96,9 +96,17 @@ export function setupPointerHandlers(
       // End drag
       callbacks.onDragEnd();
     } else {
-      // It was a tap - use elementFromPoint to get the cell under pointer
-      // (more reliable than e.target which can be affected by pointer capture)
-      const pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
+      // It was a tap - try multiple methods to get the cell position
+      // 1. Try elementFromPoint (works on desktop)
+      // 2. Fall back to e.target (might work on some mobile)
+      // 3. Fall back to start position (user didn't move, so same cell)
+      let pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
+      if (!pos) {
+        pos = getPositionFromElement(e.target as Element);
+      }
+      if (!pos) {
+        pos = tracker.startPosition;
+      }
       if (pos) {
         callbacks.onTapEnd(pos);
       }
