@@ -140,29 +140,11 @@ export function projectToGridCell(
     return startCell;
   }
 
-  // Calculate how far along the direction the pointer has moved
-  // Project the pointer delta onto the direction vector
-  let steps: number;
-
-  if (direction.dRow === 0) {
-    // Horizontal: project dx onto direction to get steps along that axis
-    // This handles the sign correctly (e.g., dx=-300, dCol=-1 → steps=+6)
-    steps = (dx * direction.dCol) / cellSize;
-  } else if (direction.dCol === 0) {
-    // Vertical: project dy onto direction to get steps along that axis
-    steps = (dy * direction.dRow) / cellSize;
-  } else {
-    // Diagonal: use the component that gives the most steps
-    // (both should be similar for true diagonal movement)
-    const stepsFromX = dx / cellSize;
-    const stepsFromY = dy / cellSize;
-    // Use the average for diagonal
-    steps = (Math.abs(stepsFromX) + Math.abs(stepsFromY)) / 2;
-    // Correct sign based on direction
-    if (direction.dCol * dx < 0 || direction.dRow * dy < 0) {
-      steps = -steps;
-    }
-  }
+  // Project the pointer delta (in cells) onto the locked direction vector.
+  // This yields a signed scalar that matches the intended drag direction for all quadrants.
+  const deltaCols = dx / cellSize;
+  const deltaRows = dy / cellSize;
+  const steps = deltaCols * direction.dCol + deltaRows * direction.dRow;
 
   // Round to nearest cell
   const cellSteps = Math.round(steps);
