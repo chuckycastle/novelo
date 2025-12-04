@@ -90,7 +90,12 @@ export function setupPointerHandlers(
       // Lock direction based on initial movement vector
       tracker.lockedDirection = snapToDirection(dx, dy);
       // Only capture pointer once drag starts (not on tap)
-      gridElement.setPointerCapture(e.pointerId);
+      // Wrap in try/catch as some mobile browsers don't support pointer capture
+      try {
+        gridElement.setPointerCapture(e.pointerId);
+      } catch {
+        // Pointer capture not supported, continue without it
+      }
       callbacks.onDragStart(tracker.startPosition);
     }
 
@@ -120,16 +125,18 @@ export function setupPointerHandlers(
       // End drag
       callbacks.onDragEnd();
     } else {
-      // It was a tap - try multiple methods to get the cell position
-      // 1. Try elementFromPoint (works on desktop)
-      // 2. Fall back to e.target (might work on some mobile)
-      // 3. Fall back to start position (user didn't move, so same cell)
-      let pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
+      // It was a tap - for tap, user didn't move so startPosition is most reliable
+      // On mobile, clientX/clientY may be unavailable after touch ends
+      // Priority: startPosition > elementFromPoint > e.target
+      let pos: Position | null = tracker.startPosition;
       if (!pos) {
-        pos = getPositionFromElement(e.target as Element);
+        // Fallback to coordinate-based detection
+        if (e.clientX !== 0 || e.clientY !== 0) {
+          pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
+        }
       }
       if (!pos) {
-        pos = tracker.startPosition;
+        pos = getPositionFromElement(e.target as Element);
       }
       if (pos) {
         callbacks.onTapEnd(pos);
