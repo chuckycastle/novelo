@@ -27,6 +27,15 @@ export interface PointerCallbacks {
 }
 
 /**
+ * Classify whether the interaction should be treated as a drag on pointerup.
+ * We only treat it as a drag if we both crossed the drag threshold and emitted
+ * at least a 2-cell path.
+ */
+export function classifyInteraction(hasMoved: boolean, hasEmittedDragPath: boolean): 'drag' | 'tap' {
+  return hasMoved && hasEmittedDragPath ? 'drag' : 'tap';
+}
+
+/**
  * Get grid position from pointer event
  */
 function getPositionFromElement(element: Element | null): Position | null {
@@ -61,7 +70,9 @@ export function setupPointerHandlers(
     if (!pos) return;
 
     // Prevent default to stop scrolling/text selection
-    e.preventDefault();
+    if (e.pointerType !== 'mouse') {
+      e.preventDefault();
+    }
 
     // Calculate cell size from grid dimensions
     const gridRect = gridElement.getBoundingClientRect();
@@ -132,10 +143,7 @@ export function setupPointerHandlers(
   const onPointerUp = (e: PointerEvent): void => {
     if (!tracker) return;
 
-    if (tracker.hasMoved && tracker.hasEmittedDragPath) {
-      // End drag
-      callbacks.onDragEnd();
-    } else {
+    if (classifyInteraction(tracker.hasMoved, tracker.hasEmittedDragPath) === 'tap') {
       // It was a tap - for tap, user didn't move so startPosition is most reliable
       // On mobile, clientX/clientY may be unavailable after touch ends
       // Priority: startPosition > elementFromPoint > e.target
@@ -152,6 +160,9 @@ export function setupPointerHandlers(
       if (pos) {
         callbacks.onTapEnd(pos);
       }
+    } else {
+      // End drag
+      callbacks.onDragEnd();
     }
 
     tracker = null;
