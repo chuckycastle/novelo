@@ -101,7 +101,7 @@ export function snapToDirection(dx: number, dy: number): Direction {
 
   // Handle pure horizontal
   if (dy === 0) {
-    return { dRow: 0, dCol: dy > 0 ? 1 : -1 };
+    return { dRow: 0, dCol: dx > 0 ? 1 : -1 };
   }
 
   const slope = Math.abs(dy / dx);
