@@ -29,12 +29,26 @@
   }
 }
 
-/* Grid styling */
+/* Grid styling - responsive for portrait mobile */
 #grid {
   display: grid;
-  grid-template-columns: repeat(20, minmax(0, 1fr));
+  grid-template-columns: repeat(20, 1fr);
   gap: 0;
-  touch-action: manipulation;
+  touch-action: none; /* Prevent scrolling while interacting with grid */
+  width: min(100%, calc(100vw - 2rem)); /* Fit within viewport with padding */
+  max-width: 720px; /* Cap size on larger screens */
+  aspect-ratio: 1; /* Keep grid square */
+}
+
+/* Grid cells - size based on container */
+#grid button {
+  aspect-ratio: 1;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  font-size: clamp(0.5rem, 2.5vw, 0.875rem);
 }
 
 /* Prevent text selection during drag */

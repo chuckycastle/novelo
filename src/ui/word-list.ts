@@ -11,7 +11,7 @@ export function renderWordList(
   container.innerHTML = '';
 
   const list = document.createElement('ul');
-  list.className = 'grid grid-cols-2 gap-x-4 gap-y-1 text-sm';
+  list.className = 'grid grid-cols-3 sm:grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-0.5 sm:gap-y-1 text-xs sm:text-sm';
 
   words.forEach((word) => {
     const isFound = foundWords.has(word);
@@ -48,9 +48,8 @@ export function updateProgress(
 
   container.innerHTML = `
     <span class="${isComplete ? 'text-green-600' : 'text-purple-600'} font-semibold">
-      ${found} / ${total}
+      ${found}/${total}
     </span>
-    <span class="text-gray-600"> names found</span>
-    ${isComplete ? '<span class="ml-2">🎉</span>' : ''}
+    ${isComplete ? ' 🎉' : ''}
   `;
 }

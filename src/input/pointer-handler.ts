@@ -48,6 +48,9 @@ export function setupPointerHandlers(
     const pos = getPositionFromElement(e.target as Element);
     if (!pos) return;
 
+    // Prevent default to stop scrolling/text selection
+    e.preventDefault();
+
     // Capture pointer on the grid element to prevent pointerleave during drag
     gridElement.setPointerCapture(e.pointerId);
 
@@ -64,6 +67,9 @@ export function setupPointerHandlers(
 
   const onPointerMove = (e: PointerEvent): void => {
     if (!tracker || !tracker.startPosition) return;
+
+    // Prevent default to stop scrolling while dragging
+    e.preventDefault();
 
     const dx = e.clientX - tracker.startX;
     const dy = e.clientY - tracker.startY;
@@ -125,6 +131,14 @@ export function setupPointerHandlers(
   // Prevent context menu on long press
   gridElement.addEventListener('contextmenu', (e) => e.preventDefault());
 
+  // Prevent touch scrolling on the grid
+  const onTouchMove = (e: TouchEvent): void => {
+    if (tracker) {
+      e.preventDefault();
+    }
+  };
+  gridElement.addEventListener('touchmove', onTouchMove, { passive: false });
+
   // Return cleanup function
   return () => {
     gridElement.removeEventListener('pointerdown', onPointerDown);
@@ -132,5 +146,6 @@ export function setupPointerHandlers(
     gridElement.removeEventListener('pointerup', onPointerUp);
     gridElement.removeEventListener('pointercancel', onPointerCancel);
     gridElement.removeEventListener('pointerleave', onPointerLeave);
+    gridElement.removeEventListener('touchmove', onTouchMove);
   };
 }

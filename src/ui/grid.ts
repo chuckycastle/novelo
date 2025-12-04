@@ -18,14 +18,13 @@ export function renderGrid(
       const cell = document.createElement('button');
       cell.type = 'button';
       cell.className = `
-        w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9
         flex items-center justify-center
-        border border-gray-300
-        font-semibold uppercase text-xs sm:text-sm
-        select-none touch-manipulation
+        border border-gray-200
+        font-semibold uppercase
+        select-none
         transition-colors duration-100
-        focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-1
-        ${isFound ? 'bg-green-200 border-green-600 text-green-800' : 'bg-white hover:bg-purple-50'}
+        focus:outline-none
+        ${isFound ? 'bg-green-200 border-green-400 text-green-800' : 'bg-white hover:bg-purple-50'}
       `.trim().replace(/\s+/g, ' ');
 
       cell.textContent = letter;
