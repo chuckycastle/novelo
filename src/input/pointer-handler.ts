@@ -12,6 +12,7 @@ interface PointerTracker {
   // Direction locking for geometric drag
   lockedDirection: Direction | null;
   cellSize: number;
+  hasEmittedDragPath: boolean;
 }
 
 let tracker: PointerTracker | null = null;
@@ -74,6 +75,7 @@ export function setupPointerHandlers(
       hasMoved: false,
       lockedDirection: null,
       cellSize,
+      hasEmittedDragPath: false,
     };
 
     // Immediately notify tap start (for visual feedback)
@@ -120,6 +122,9 @@ export function setupPointerHandlers(
       const path = getLineCells(tracker.startPosition, endPos);
       if (path.length > 0) {
         callbacks.onDragMove(path);
+        if (path.length >= 2) {
+          tracker.hasEmittedDragPath = true;
+        }
       }
     }
   };
@@ -127,7 +132,7 @@ export function setupPointerHandlers(
   const onPointerUp = (e: PointerEvent): void => {
     if (!tracker) return;
 
-    if (tracker.hasMoved) {
+    if (tracker.hasMoved && tracker.hasEmittedDragPath) {
       // End drag
       callbacks.onDragEnd();
     } else {
