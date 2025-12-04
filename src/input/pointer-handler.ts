@@ -31,7 +31,13 @@ export interface PointerCallbacks {
 function getPositionFromElement(element: Element | null): Position | null {
   if (!element) return null;
 
-  const cell = element.closest('[data-row][data-col]');
+  // Some browsers fire events on text nodes; normalize to an element before calling closest
+  const target =
+    element instanceof Element ? element : (element as unknown as Node | null)?.parentElement;
+
+  if (!target) return null;
+
+  const cell = target.closest('[data-row][data-col]');
   if (!cell) return null;
 
   const row = parseInt(cell.getAttribute('data-row') ?? '', 10);
