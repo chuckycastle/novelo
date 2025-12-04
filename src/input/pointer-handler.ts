@@ -1,4 +1,6 @@
-import type { Position } from '../types';
+import type { Direction, Position } from '../types';
+import { getLineCells, snapToDirection, projectToGridCell } from '../core/geometry';
+import { GRID_SIZE } from '../config/puzzle';
 
 const DRAG_THRESHOLD = 10; // pixels
 
@@ -7,6 +9,9 @@ interface PointerTracker {
   startY: number;
   startPosition: Position | null;
   hasMoved: boolean;
+  // Direction locking for geometric drag
+  lockedDirection: Direction | null;
+  cellSize: number;
 }
 
 let tracker: PointerTracker | null = null;
@@ -15,7 +20,7 @@ export interface PointerCallbacks {
   onTapStart: (pos: Position) => void;
   onTapEnd: (pos: Position) => void;
   onDragStart: (pos: Position) => void;
-  onDragMove: (pos: Position) => void;
+  onDragMove: (path: readonly Position[]) => void; // Changed: now receives computed path
   onDragEnd: () => void;
   onCancel: () => void;
 }
@@ -51,12 +56,18 @@ export function setupPointerHandlers(
     // Prevent default to stop scrolling/text selection
     e.preventDefault();
 
-    // Store pointer ID for potential capture during drag
+    // Calculate cell size from grid dimensions
+    const gridRect = gridElement.getBoundingClientRect();
+    const cellSize = gridRect.width / GRID_SIZE;
+
+    // Store pointer info for drag detection
     tracker = {
       startX: e.clientX,
       startY: e.clientY,
       startPosition: pos,
       hasMoved: false,
+      lockedDirection: null,
+      cellSize,
     };
 
     // Immediately notify tap start (for visual feedback)
@@ -76,15 +87,28 @@ export function setupPointerHandlers(
     // Check if we've crossed the drag threshold
     if (!tracker.hasMoved && distance > DRAG_THRESHOLD) {
       tracker.hasMoved = true;
+      // Lock direction based on initial movement vector
+      tracker.lockedDirection = snapToDirection(dx, dy);
       // Only capture pointer once drag starts (not on tap)
       gridElement.setPointerCapture(e.pointerId);
       callbacks.onDragStart(tracker.startPosition);
     }
 
-    if (tracker.hasMoved) {
-      const pos = getPositionFromElement(document.elementFromPoint(e.clientX, e.clientY));
-      if (pos) {
-        callbacks.onDragMove(pos);
+    if (tracker.hasMoved && tracker.lockedDirection) {
+      // Project pointer position onto locked direction to get end cell
+      const endPos = projectToGridCell(
+        tracker.startPosition,
+        dx,
+        dy,
+        tracker.lockedDirection,
+        tracker.cellSize,
+        GRID_SIZE,
+      );
+
+      // Build path geometrically from start to projected end
+      const path = getLineCells(tracker.startPosition, endPos);
+      if (path.length > 0) {
+        callbacks.onDragMove(path);
       }
     }
   };

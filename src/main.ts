@@ -150,10 +150,10 @@ function handleDragStart(pos: Position): void {
 }
 
 /**
- * Handle drag move
+ * Handle drag move - receives pre-computed path from pointer handler
  */
-function handleDragMoveEvent(pos: Position): void {
-  selectionState = handleDragMove(selectionState, pos);
+function handleDragMoveEvent(path: readonly Position[]): void {
+  selectionState = handleDragMove(selectionState, path);
   updateSelectionHighlight(gridContainer!, selectionState.currentPath);
 }
 

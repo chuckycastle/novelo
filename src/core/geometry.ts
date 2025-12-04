@@ -83,3 +83,96 @@ export function positionsEqual(a: Position, b: Position): boolean {
 export function findPositionInPath(path: readonly Position[], pos: Position): number {
   return path.findIndex((p) => positionsEqual(p, pos));
 }
+
+/**
+ * Snap pointer delta to one of 8 cardinal/diagonal directions.
+ * Uses slope thresholds to determine if movement is horizontal, vertical, or diagonal.
+ */
+export function snapToDirection(dx: number, dy: number): Direction {
+  // Handle zero movement
+  if (dx === 0 && dy === 0) {
+    return { dRow: 0, dCol: 0 };
+  }
+
+  // Handle pure vertical
+  if (dx === 0) {
+    return { dRow: dy > 0 ? 1 : -1, dCol: 0 };
+  }
+
+  // Handle pure horizontal
+  if (dy === 0) {
+    return { dRow: 0, dCol: dy > 0 ? 1 : -1 };
+  }
+
+  const slope = Math.abs(dy / dx);
+
+  // Determine if diagonal (slope near 1) or axis-aligned
+  // Thresholds: < 0.5 = horizontal, > 2.0 = vertical, else diagonal
+  if (slope < 0.5) {
+    // Horizontal
+    return { dRow: 0, dCol: dx > 0 ? 1 : -1 };
+  } else if (slope > 2.0) {
+    // Vertical
+    return { dRow: dy > 0 ? 1 : -1, dCol: 0 };
+  } else {
+    // Diagonal
+    return {
+      dRow: dy > 0 ? 1 : -1,
+      dCol: dx > 0 ? 1 : -1,
+    };
+  }
+}
+
+/**
+ * Project pointer movement onto a locked direction line and compute the end cell.
+ * Returns the grid cell that the projection points to.
+ */
+export function projectToGridCell(
+  startCell: Position,
+  dx: number,
+  dy: number,
+  direction: Direction,
+  cellSize: number,
+  gridSize: number,
+): Position {
+  // If no direction, return start
+  if (direction.dRow === 0 && direction.dCol === 0) {
+    return startCell;
+  }
+
+  // Calculate how far along the direction the pointer has moved
+  // Project the pointer delta onto the direction vector
+  let steps: number;
+
+  if (direction.dRow === 0) {
+    // Horizontal: use dx
+    steps = dx / cellSize;
+  } else if (direction.dCol === 0) {
+    // Vertical: use dy
+    steps = dy / cellSize;
+  } else {
+    // Diagonal: use the component that gives the most steps
+    // (both should be similar for true diagonal movement)
+    const stepsFromX = dx / cellSize;
+    const stepsFromY = dy / cellSize;
+    // Use the average for diagonal
+    steps = (Math.abs(stepsFromX) + Math.abs(stepsFromY)) / 2;
+    // Correct sign based on direction
+    if (direction.dCol * dx < 0 || direction.dRow * dy < 0) {
+      steps = -steps;
+    }
+  }
+
+  // Round to nearest cell
+  const cellSteps = Math.round(steps);
+
+  // Calculate end position
+  const endRow = startCell.row + direction.dRow * cellSteps;
+  const endCol = startCell.col + direction.dCol * cellSteps;
+
+  // Clamp to grid bounds
+  return {
+    row: Math.max(0, Math.min(gridSize - 1, endRow)),
+    col: Math.max(0, Math.min(gridSize - 1, endCol)),
+  };
+}
