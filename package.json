@@ -15,7 +15,12 @@
     "test:watch": "vitest",
     "verify": "npm run format:check && npm run lint && npm run build"
   },
-  "keywords": ["word-search", "puzzle", "game", "typescript"],
+  "keywords": [
+    "word-search",
+    "puzzle",
+    "game",
+    "typescript"
+  ],
   "author": "",
   "license": "CC-BY-NC-SA-4.0",
   "devDependencies": {
@@ -30,5 +35,8 @@
     "typescript-eslint": "^8.48.1",
     "vite": "^7.2.6",
     "vitest": "^4.0.15"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.86.0"
   }
 }

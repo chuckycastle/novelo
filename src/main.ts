@@ -25,6 +25,8 @@ import {
 import { renderWordList, updateProgress } from './ui/word-list';
 import { initTimerDisplay, updateTimerDisplay } from './ui/timer-display';
 import { showCompletionScreen, showGameScreen, showStartScreen } from './ui/screens';
+import { renderLeaderboard } from './ui/leaderboard';
+import { getTopScores, submitScore } from './services/supabase';
 import type { GameState, Position, SelectionState } from './types';
 import './styles/main.css';
 
@@ -33,12 +35,14 @@ let gameState: GameState = createInitialState();
 let selectionState: SelectionState = createInitialSelection();
 let timer: PrecisionTimer | null = null;
 let foundCells: Set<string> = new Set();
+let playerName: string = '';
 
 // DOM elements
 let gridContainer: HTMLElement | null = null;
 let wordListContainer: HTMLElement | null = null;
 let progressContainer: HTMLElement | null = null;
 let timerContainer: HTMLElement | null = null;
+let leaderboardContainer: HTMLElement | null = null;
 
 /**
  * Initialize the application
@@ -49,6 +53,7 @@ function init(): void {
   wordListContainer = document.getElementById('word-list');
   progressContainer = document.getElementById('progress');
   timerContainer = document.getElementById('timer');
+  leaderboardContainer = document.getElementById('leaderboard-list');
 
   if (!gridContainer || !wordListContainer || !progressContainer || !timerContainer) {
     console.error('Required DOM elements not found');
@@ -62,7 +67,10 @@ function init(): void {
 /**
  * Handle starting the game
  */
-function handleStartGame(): void {
+async function handleStartGame(name: string): Promise<void> {
+  // Store player name
+  playerName = name;
+
   // Reset state
   gameState = startGame(createInitialState());
   selectionState = createInitialSelection();
@@ -76,6 +84,12 @@ function handleStartGame(): void {
   renderWordList(wordListContainer!, familyPuzzle.words, gameState.foundWords);
   updateProgress(progressContainer!, 0, familyPuzzle.words.length);
   initTimerDisplay(timerContainer!);
+
+  // Fetch and display leaderboard
+  if (leaderboardContainer) {
+    const scores = await getTopScores();
+    renderLeaderboard(leaderboardContainer, scores);
+  }
 
   // Setup input handlers
   setupPointerHandlers(gridContainer!, {
@@ -214,16 +228,29 @@ function checkForMatch(cells: readonly Position[]): void {
 /**
  * Handle game completion
  */
-function handleGameComplete(): void {
+async function handleGameComplete(): Promise<void> {
+  // Get elapsed time before stopping (stop() resets the reference)
+  const timeMs = timer?.getElapsed() ?? 0;
   const finalTime = timer?.stop() ?? '00:00.00';
-  showCompletionScreen(finalTime, handlePlayAgain);
+
+  // Submit score to leaderboard
+  const { rank } = await submitScore(playerName, timeMs, finalTime);
+
+  // Show completion screen with rank
+  showCompletionScreen(finalTime, rank, handlePlayAgain);
+
+  // Refresh leaderboard
+  if (leaderboardContainer) {
+    const scores = await getTopScores();
+    renderLeaderboard(leaderboardContainer, scores);
+  }
 }
 
 /**
  * Handle play again
  */
 function handlePlayAgain(): void {
-  handleStartGame();
+  showStartScreen(handleStartGame);
 }
 
 // Initialize on DOM ready

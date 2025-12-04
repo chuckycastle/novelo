@@ -17,11 +17,18 @@
         <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
           NOVELO Name Search
         </h1>
-        <p class="text-gray-600 mb-8 text-lg">
+        <p class="text-gray-600 mb-6 text-lg">
           Find the names of the NOVELOs hidden in the grid.
           Names can appear forwards, backwards, or diagonally.
         </p>
-        <button id="start-btn" class="btn-primary">
+        <input
+          type="text"
+          id="player-name"
+          placeholder="Enter your name"
+          maxlength="20"
+          class="w-full px-4 py-3 mb-4 text-center text-lg border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+        />
+        <button id="start-btn" class="btn-primary" disabled>
           Start Game
         </button>
         <p class="mt-6 text-sm text-gray-500">
@@ -69,6 +76,15 @@
               <div id="word-list" class="max-h-32 sm:max-h-none overflow-y-auto">
                 <!-- Word list rendered by JS -->
               </div>
+              <!-- Leaderboard -->
+              <div id="leaderboard" class="mt-4 pt-4 border-t border-gray-200">
+                <h3 class="text-xs sm:text-sm font-semibold text-gray-800 uppercase tracking-wide mb-2">
+                  Top 5 Times
+                </h3>
+                <div id="leaderboard-list" class="text-sm">
+                  <!-- Leaderboard rendered by JS -->
+                </div>
+              </div>
             </div>
           </aside>
         </div>
@@ -81,8 +97,11 @@
         <h2 class="text-2xl sm:text-3xl font-medium mb-2">
           Puzzle Complete!
         </h2>
-        <div id="final-time" class="text-5xl sm:text-7xl font-bold font-mono my-6 drop-shadow-lg">
+        <div id="final-time" class="text-5xl sm:text-7xl font-bold font-mono my-4 drop-shadow-lg">
           00:00.00
+        </div>
+        <div id="rank-display" class="hidden text-2xl font-semibold mb-4 text-yellow-300">
+          <!-- Rank rendered by JS -->
         </div>
         <p class="text-lg opacity-90 mb-8">
           Screenshot to share your time!
