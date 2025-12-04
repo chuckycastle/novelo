@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Family Word Search - Find hidden family names in this interactive puzzle game" />
+    <title>Family Word Search</title>
+    <link rel="icon" type="image/svg+xml" href="/novelo/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 font-sans">
+    <!-- Start Screen -->
+    <div id="start-screen" class="fixed inset-0 flex flex-col items-center justify-center p-4">
+      <div class="text-center max-w-md">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
+          Family Word Search
+        </h1>
+        <p class="text-gray-600 mb-8 text-lg">
+          Find the names of children and grandchildren hidden in the grid.
+          Words can appear forwards, backwards, or diagonally.
+        </p>
+        <button id="start-btn" class="btn-primary">
+          Start Game
+        </button>
+        <p class="mt-6 text-sm text-gray-500">
+          Timer starts when you click!
+        </p>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="hidden min-h-screen p-4">
+      <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-4">
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
+            Family Word Search
+          </h1>
+          <div id="timer" class="font-mono text-2xl sm:text-3xl font-bold text-purple-600 mt-2">
+            00:00.00
+          </div>
+        </header>
+
+        <!-- Main layout -->
+        <div class="flex flex-col md:flex-row md:gap-8">
+          <!-- Grid -->
+          <div class="flex-1 flex justify-center">
+            <div id="grid" class="bg-white rounded-lg shadow-lg p-2 border border-gray-200">
+              <!-- Grid cells rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <aside class="w-full md:w-64 mt-6 md:mt-0">
+            <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-800 mb-3 uppercase tracking-wide">
+                Hidden Names
+              </h2>
+              <p class="text-sm text-gray-600 mb-4">
+                Click the first and last letter, or drag across the word.
+              </p>
+              <div id="word-list">
+                <!-- Word list rendered by JS -->
+              </div>
+              <div id="progress" class="mt-4 pt-4 border-t border-gray-200 text-sm">
+                <!-- Progress rendered by JS -->
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div id="complete-screen" class="hidden fixed inset-0 z-50 bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center text-white p-4">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl font-medium mb-2">
+          Puzzle Complete!
+        </h2>
+        <div id="final-time" class="text-5xl sm:text-7xl font-bold font-mono my-6 drop-shadow-lg">
+          00:00.00
+        </div>
+        <p class="text-lg opacity-90 mb-8">
+          Screenshot to share your time!
+        </p>
+        <button id="play-again-btn" class="btn-secondary">
+          Play Again
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

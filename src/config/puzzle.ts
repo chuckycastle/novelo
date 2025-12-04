@@ -1,0 +1,47 @@
+import type { PuzzleConfig } from '../types';
+
+export const familyPuzzle: PuzzleConfig = {
+  title: 'Family Word Search',
+  description: 'Find the names of children and grandchildren hidden in the grid.',
+  grid: [
+    'MXXOXCZVYAXKQYRLTTSE',
+    'GAIPAZSQWDANENTSEWQP',
+    'NNRCBLAWPNQGZAUZAOAX',
+    'OAYLXDIJQMJEGHWFPNJA',
+    'DQTKEJRLNOBUPXRAKHSV',
+    'IUJHXNFREAEENPIFFLKV',
+    'DEALAEEDIWUDSPCAVCWT',
+    'PCXXTNNSGGYGDSALEENU',
+    'DUCSEWILLFTSHFYPWVTE',
+    'OJRLILQEAZTXTESRGCTQ',
+    'TCAMITAFLBTEMBWGCGSO',
+    'WYHCMZERJNUXKPLADTDP',
+    'XQSAHSVGYNQRHIFCHZYW',
+    'BKTLBAJGCAQXWNAGJEUN',
+    'PTBQIETOZKLDZCWAVXCI',
+    'XZBTSDLOTAWUMFSADEAR',
+    'GLXDLHPIVLQAAIKWYRAZ',
+    'FBGPVMIDTSELEPJSKZSV',
+    'SSMPUEDAJAYLBKGICHII',
+    'PSUMHLKAZTUNDGOHAEWW',
+  ],
+  words: [
+    'FATIMA',
+    'PAULA',
+    'DILSY',
+    'NENA',
+    'CHATO',
+    'FAFA',
+    'MARLENE',
+    'SALEEN',
+    'CHABELITA',
+    'ALEXA',
+    'NATHANIEL',
+    'JADE',
+    'JASIEL',
+    'ISAAC',
+    'JOEL',
+  ],
+};
+
+export const GRID_SIZE = 20;

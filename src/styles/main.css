@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/* Custom base styles */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors;
+  }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .cell:hover {
+    background: inherit !important;
+  }
+}
+
+/* Grid styling */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  gap: 0;
+  touch-action: manipulation;
+}
+
+/* Prevent text selection during drag */
+#grid * {
+  user-select: none;
+  -webkit-user-select: none;
+}
