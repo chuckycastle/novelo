@@ -160,9 +160,9 @@ export function setupPointerHandlers(
   };
 
   const onPointerLeave = (): void => {
-    // Only cancel if we don't have an active tracker (pointer not captured)
-    // With pointer capture on grid, this shouldn't fire during active interaction
-    if (!tracker) {
+    // If we had an active interaction and the pointer left, clear it
+    if (tracker) {
+      tracker = null;
       callbacks.onCancel();
     }
   };
