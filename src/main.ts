@@ -11,6 +11,7 @@ import {
   handleTapSelection,
   startSelection,
 } from './state/selection-state';
+import { positionsEqual } from './core/geometry';
 import {
   createInitialState,
   markWordFound,
@@ -108,6 +109,16 @@ function handleTapStart(pos: Position): void {
  * Handle tap end (complete selection or set second point)
  */
 function handleTapEnd(pos: Position): void {
+  // If this is the first tap completing (pointerup on same cell as pointerdown),
+  // the selection is already set by handleTapStart - just keep it highlighted
+  if (selectionState.currentPath.length === 1) {
+    const firstCell = selectionState.currentPath[0];
+    if (firstCell && positionsEqual(firstCell, pos)) {
+      // First tap completion - selection already set, nothing more to do
+      return;
+    }
+  }
+
   const result = handleTapSelection(selectionState, pos);
   selectionState = result.state;
 
